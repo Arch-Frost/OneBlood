@@ -1,10 +1,8 @@
--- CREATE SCHEMA IF NOT EXISTS University;
+CREATE SCHEMA IF NOT EXISTS blood_bank;
 Use blood_bank;
 
-
-
 CREATE TABLE  IF NOT EXISTS  `Medical_History` (
-  `DonorID` INT,
+  `DonationID` INT,
   `Donation_Date` DATE,
   `HIV Positve` BOOLEAN,
   `Malaria` BOOLEAN,
@@ -12,7 +10,8 @@ CREATE TABLE  IF NOT EXISTS  `Medical_History` (
   `Leukemia` BOOLEAN,
   `Heart Problems` BOOLEAN,
   `Lung Problems` BOOLEAN,
-  `Hepatitis` BOOLEAN
+  `Hepatitis` BOOLEAN,
+  PRIMARY KEY (Donation_Date)
 );
 
 CREATE TABLE  IF NOT EXISTS  `User` (
@@ -40,12 +39,12 @@ CREATE TABLE  IF NOT EXISTS  `Patient` (
   PRIMARY KEY (`PatientID`)
 );
 
-CREATE TABLE  IF NOT EXISTS  `Donor_Transaction` (
+CREATE TABLE IF NOT EXISTS  `Donor_Transaction` (
   `DonationID` INT AUTO_INCREMENT,
   `BloodBagID` INT,
   `DonorID` INT,
   `Blood Group` VARCHAR(3),
-  `Donation_Date` DATE  NOT NULL,
+  `Donation_Date` DATE NOT NULL,
   PRIMARY KEY (`DonationID`)
 );
 
@@ -72,13 +71,13 @@ CREATE TABLE  IF NOT EXISTS  `Patient_Transaction` (
 ALTER TABLE Donor
 ADD CONSTRAINT donor_user_fk FOREIGN KEY (UserID) REFERENCES User(UserID);
 ALTER TABLE Patient
-ADD  CONSTRAINT patient_user_fk FOREIGN KEY (UserID) REFERENCES User(UserID);
+ADD CONSTRAINT patient_user_fk FOREIGN KEY (UserID) REFERENCES User(UserID);
 ALTER TABLE Donor_Transaction
 ADD CONSTRAINT dt_bag_fk FOREIGN KEY (BloodBagID) REFERENCES Inventory(BloodBagID);
 ALTER TABLE Donor_Transaction
 ADD CONSTRAINT dt_donor_fk FOREIGN KEY (DonorID) REFERENCES Donor(DonorID);
--- ALTER TABLE Medical_History
--- ADD  CONSTRAINT mh_dd_fk FOREIGN KEY (Donation_Date) REFERENCES Donor_Transaction(Donation_Date);
+ALTER TABLE Medical_History
+ADD CONSTRAINT mh_dd_fk FOREIGN KEY (DonationID) REFERENCES Donor_Transaction(DonationID);
 
 ALTER TABLE Patient_Transaction
 ADD CONSTRAINT pt_bag_fk FOREIGN KEY (BloodBagID) REFERENCES Inventory(BloodBagID);

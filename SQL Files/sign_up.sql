@@ -1,6 +1,5 @@
--- CREATE SCHEMA IF NOT EXISTS University;
-Use login;
-
+CREATE SCHEMA IF NOT EXISTS login;
+USE login;
 
 CREATE TABLE  IF NOT EXISTS  `Sign_Up` (
   `UserID` INT AUTO_INCREMENT,
@@ -21,18 +20,14 @@ CREATE TABLE  IF NOT EXISTS  `Registered_Accounts` (
   `Username` VARCHAR(15),
   `Password` VARCHAR(255),
   `Email` VARCHAR(100),
-  KEY `PK + FK` (`UserID`)
+  PRIMARY KEY (`UserID`),
+  CONSTRAINT RA_user_fk FOREIGN KEY (`UserID`) REFERENCES Sign_Up(`UserID`)
 );
 
 CREATE TABLE  IF NOT EXISTS  `Sessions` (
   `SessionID` INT,
   `UserID` INT,
   `Login Date` DATE,
-  PRIMARY KEY (`SessionID`)
+  PRIMARY KEY (`SessionID`),
+  CONSTRAINT sess_user_fk FOREIGN KEY (UserID) REFERENCES Registered_Accounts(UserID)  
 );
-
-ALTER TABLE Registered_Accounts
-ADD CONSTRAINT RA_user_fk
-FOREIGN KEY (UserID) REFERENCES Sign_Up(UserID);
-ALTER TABLE Sessions
-ADD  CONSTRAINT sess_user_fk FOREIGN KEY (UserID) REFERENCES Sign_Up(UserID);
