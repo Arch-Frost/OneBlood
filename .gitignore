@@ -1,1 +1,4 @@
 .venv/
+Forms\__pycache__
+PythonFiles\__pycache__
+Forms\test.py

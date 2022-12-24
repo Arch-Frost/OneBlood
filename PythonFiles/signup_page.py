@@ -7,14 +7,14 @@
 
 import mysql.connector
 from PyQt6 import QtCore, QtGui, QtWidgets
+from login_page import Ui_MainWindow2
 
 
-
-class Ui_MainWindow(object):
+class Ui_MainWindow(QtWidgets.QMainWindow):
     mydb = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="qwerty123",
+            password="psudo",
             database="login")   
 
     def setupUi(self, MainWindow):
@@ -73,6 +73,9 @@ class Ui_MainWindow(object):
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
+        widgets = QtWidgets.QStackedWidget()
+        widgets.addWidget(Ui_MainWindow2)
+
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -127,18 +130,18 @@ class Ui_MainWindow(object):
 
 if __name__ == "__main__":
 
-    mydb = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="qwerty123",
-    database="login"
-    )
-
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
+    main = QtWidgets.QMainWindow()
+    
+    # Add Ui_MainWindow to the stacked widget
     ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
+    ui.setupUi(main)
+    
+
+
+    # Show the stacked widget  
+    main.show()
+    
     sys.exit(app.exec())
    
