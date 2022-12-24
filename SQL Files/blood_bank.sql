@@ -85,3 +85,6 @@ ALTER TABLE Patient_Transaction
 ADD CONSTRAINT pt_patient_fk FOREIGN KEY (PatientID) REFERENCES Patient(PatientID);
 ALTER TABLE Inventory
 ADD CONSTRAINT IV_DI_fk FOREIGN KEY (DonationID) REFERENCES Donor_Transaction(DonationID);
+
+-- Insert values into donor table
+

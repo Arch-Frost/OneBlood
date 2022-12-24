@@ -6,11 +6,10 @@ CREATE TABLE  IF NOT EXISTS  `Sign_Up` (
   `Username` VARCHAR(15) NOT NULL,
   `Password` VARCHAR(255) NOT NULL,
   `Website` VARCHAR(255) NOT NULL,
-  `Location` VARCHAR(150),
   `City` VARCHAR(40) NOT NULL,
   `Email` VARCHAR(100),
-  `Phone Number` VARCHAR(11) NOT NULL,
-  `Creation Date` DATE,
+  `Phone_Number` VARCHAR(11) NOT NULL,
+  `Creation Date`  DATETIME DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`UserID`),
   CONSTRAINT signup_un_uk UNIQUE(Username)
 );
