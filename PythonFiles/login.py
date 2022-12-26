@@ -35,7 +35,7 @@ class Ui_MainWindow(object):
         self.loginButton = QtWidgets.QPushButton(self.page_1)
         self.loginButton.setGeometry(QtCore.QRect(180, 160, 93, 28))
         self.loginButton.setObjectName("loginButton")
-        self.loginButton.clicked.connect(self.switch_page)
+        self.loginButton.clicked.connect(self.login)
         self.signupbutton = QtWidgets.QCommandLinkButton(self.page_1)
         self.signupbutton.setGeometry(QtCore.QRect(130, 220, 222, 48))
         self.signupbutton.setObjectName("signupbutton")
@@ -104,7 +104,7 @@ class Ui_MainWindow(object):
         self.signup_pushbutton = QtWidgets.QPushButton(self.page_2)
         self.signup_pushbutton.setGeometry(QtCore.QRect(200, 280, 93, 28))
         self.signup_pushbutton.setObjectName("signup_pushbutton")
-        self.signup_pushbutton.clicked.connect(self.switch_page)
+        self.signup_pushbutton.clicked.connect(self.signup)
         self.comboBox = QtWidgets.QComboBox(self.page_2)
         self.comboBox.setGeometry(QtCore.QRect(190, 110, 111, 21))
         self.comboBox.setObjectName("comboBox")
@@ -147,31 +147,67 @@ class Ui_MainWindow(object):
         if self.stackedWidget.currentIndex() == 0:
             self.stackedWidget.setCurrentIndex(1)
         else:
-            self.signup()
             self.stackedWidget.setCurrentIndex(0)
-
+    
     def signup(self):
         username = self.username_signuptextfield.text()
         password = self.password_signuptextfield.text()
         website= self.website_signuptextfield.text()
         email=self.email_signuptextfield.text()
-        city=self.city_signuptextfield.text()
+        city=self.comboBox.currentText()
         phone=self.phone_signuptextfield.text()
         confirmpassword= self.confirmpassword_signuptextfield.text()
 
+        # Checking if the password is matched or not
         if(password != confirmpassword):
             print("password not matched")
             self.errormsg_signup_label = QtWidgets.QLabel(self.centralwidget)
             self.errormsg_signup_label.setGeometry(QtCore.QRect(250,530,55, 16))
             self.errormsg_signup_label.setObjectName("password not matched")
+    
         else:
-            mycursor = self.mydb.cursor()
-            mycursor.execute("INSERT INTO sign_up (username, password, website, email, city, Phone_Number) VALUES (%s, %s, %s, %s, %s, %s)", (username, password, website, email, city, phone))
+            # Adding the data to the database
+            mycursor = self.mydb.cursor(buffered=True)
+            try:
+                mycursor.execute("INSERT INTO sign_up (username, password, website, email, city, Phone_Number) VALUES (%s, %s, %s, %s, %s, %s)", (username, password, website, email, city, phone))
+                mycursor.execute("INSERT INTO registered_accounts (userid, username, password, email) SELECT userid, username, password, email FROM sign_up WHERE username = %s", (username, ))
+                
+                self.mydb.commit()
+            except:
+                print("error")
+                errormsg = QtWidgets.QErrorMessage()
+                errormsg.showMessage("An Error Occured. Please Try Again")
+                errormsg.exec()
 
-            mycursor.execute("SELECT * FROM sign_up")
+            mycursor.execute("SELECT * FROM registered_accounts")
             print(mycursor.fetchall())
 
+            self.switch_page()
+
+
+    def login(self):
+        login_status = False
+
+        username = self.usernameTextField.text()
+        password = self.passwordtextfield.text()
+
+        mycursor = self.mydb.cursor(buffered=True)
+        mycursor.execute("SELECT username, password FROM registered_accounts")
+                
+        for x in mycursor:
+            if(x[0] == username and x[1] == password):
+                print("login successfull")
+                login_status = True
+                break
+        else:
+            print("login failed")
+        
+        if(login_status):
+            mycursor.execute("INSERT INTO sessions (UserID) SELECT userid FROM registered_accounts WHERE username = %s", (username,))
             self.mydb.commit()
+
+            print("session created")
+
 
 
 if __name__ == "__main__":
