@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="register_user">
      <widget class="QLabel" name="registeruser_name_label">
@@ -114,6 +114,9 @@
         <height>22</height>
        </rect>
       </property>
+      <property name="maxLength">
+       <number>20</number>
+      </property>
      </widget>
      <widget class="QLineEdit" name="registeruser_phone_textfield">
       <property name="geometry">
@@ -123,6 +126,9 @@
         <width>113</width>
         <height>22</height>
        </rect>
+      </property>
+      <property name="maxLength">
+       <number>11</number>
       </property>
      </widget>
      <widget class="QRadioButton" name="registeruser_radiobutton_male">
@@ -188,6 +194,9 @@
         <height>22</height>
        </rect>
       </property>
+      <property name="maxLength">
+       <number>40</number>
+      </property>
      </widget>
      <widget class="QPushButton" name="registeruser_save_button">
       <property name="geometry">
@@ -233,10 +242,20 @@
        <rect>
         <x>120</x>
         <y>260</y>
-        <width>73</width>
+        <width>81</width>
         <height>22</height>
        </rect>
       </property>
+      <item>
+       <property name="text">
+        <string>Donor</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Patient</string>
+       </property>
+      </item>
      </widget>
     </widget>
     <widget class="QWidget" name="manage_users">
@@ -303,6 +322,9 @@
         <height>22</height>
        </rect>
       </property>
+      <property name="maxLength">
+       <number>40</number>
+      </property>
      </widget>
      <widget class="QLabel" name="manageuser_status_label">
       <property name="geometry">
@@ -325,6 +347,9 @@
         <width>113</width>
         <height>22</height>
        </rect>
+      </property>
+      <property name="maxLength">
+       <number>11</number>
       </property>
      </widget>
      <widget class="QLabel" name="manageuser_phone_label">
@@ -375,6 +400,16 @@
         <height>22</height>
        </rect>
       </property>
+      <item>
+       <property name="text">
+        <string>Donor</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Patient</string>
+       </property>
+      </item>
      </widget>
      <widget class="QTableView" name="manageuser_table">
       <property name="geometry">
@@ -448,6 +483,9 @@
         <height>22</height>
        </rect>
       </property>
+      <property name="maxLength">
+       <number>20</number>
+      </property>
       <property name="readOnly">
        <bool>true</bool>
       </property>
@@ -455,11 +493,14 @@
      <widget class="QLineEdit" name="donate_bloodgrp_textfield">
       <property name="geometry">
        <rect>
-        <x>300</x>
-        <y>120</y>
+        <x>370</x>
+        <y>110</y>
         <width>113</width>
         <height>22</height>
        </rect>
+      </property>
+      <property name="maxLength">
+       <number>3</number>
       </property>
       <property name="readOnly">
        <bool>true</bool>
@@ -499,31 +540,6 @@
       <property name="selectionBehavior">
        <enum>QAbstractItemView::SelectRows</enum>
       </property>
-      <column>
-       <property name="text">
-        <string>Name</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Expiration Date</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Nirma</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>ID</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Blood Group</string>
-       </property>
-      </column>
      </widget>
     </widget>
     <widget class="QWidget" name="blood_transfer">
@@ -535,6 +551,9 @@
         <width>113</width>
         <height>22</height>
        </rect>
+      </property>
+      <property name="maxLength">
+       <number>20</number>
       </property>
       <property name="readOnly">
        <bool>true</bool>
@@ -575,6 +594,9 @@
         <height>22</height>
        </rect>
       </property>
+      <property name="maxLength">
+       <number>3</number>
+      </property>
       <property name="readOnly">
        <bool>true</bool>
       </property>
@@ -584,7 +606,7 @@
        <rect>
         <x>90</x>
         <y>240</y>
-        <width>541</width>
+        <width>241</width>
         <height>251</height>
        </rect>
       </property>
@@ -605,7 +627,7 @@
       <property name="geometry">
        <rect>
         <x>290</x>
-        <y>190</y>
+        <y>170</y>
         <width>93</width>
         <height>28</height>
        </rect>
@@ -697,10 +719,10 @@
      <widget class="QFrame" name="medicalhistory_hepatitis_frame">
       <property name="geometry">
        <rect>
-        <x>70</x>
-        <y>450</y>
-        <width>441</width>
-        <height>80</height>
+        <x>80</x>
+        <y>430</y>
+        <width>541</width>
+        <height>36</height>
        </rect>
       </property>
       <property name="frameShape">
@@ -709,59 +731,43 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <widget class="QLabel" name="medicalhistory_hepatitis_label">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>10</y>
-         <width>55</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>hepatitis</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="medicalhistory_hepatitis_check1">
-       <property name="geometry">
-        <rect>
-         <x>170</x>
-         <y>40</y>
-         <width>131</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="medicalhistory_hepatitis_check2">
-       <property name="geometry">
-        <rect>
-         <x>308</x>
-         <y>40</y>
-         <width>131</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout_7">
+       <item>
+        <widget class="QLabel" name="medicalhistory_hepatitis_label">
+         <property name="text">
+          <string>hepatitis</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="medicalhistory_hepatitis_check1">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="medicalhistory_hepatitis_check2">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
      <widget class="QFrame" name="medicalhistory_lungsprob_frame">
       <property name="geometry">
        <rect>
-        <x>70</x>
+        <x>80</x>
         <y>380</y>
-        <width>431</width>
-        <height>80</height>
+        <width>541</width>
+        <height>36</height>
        </rect>
       </property>
       <property name="frameShape">
@@ -770,51 +776,35 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <widget class="QLabel" name="medicalhistory_lungsprob_label">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>10</y>
-         <width>111</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>lungs problems</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="medicalhistory_lungsprob_check1">
-       <property name="geometry">
-        <rect>
-         <x>160</x>
-         <y>20</y>
-         <width>131</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="medicalhistory_lungsprob_check2">
-       <property name="geometry">
-        <rect>
-         <x>298</x>
-         <y>20</y>
-         <width>131</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item>
+        <widget class="QLabel" name="medicalhistory_lungsprob_label">
+         <property name="text">
+          <string>lungs problems</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="medicalhistory_lungsprob_check1">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="medicalhistory_lungsprob_check2">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
      <widget class="QFrame" name="medicalhistory_HIV_frame">
       <property name="geometry">
@@ -867,9 +857,9 @@
      <widget class="QFrame" name="medicalhistory_malaria_frame">
       <property name="geometry">
        <rect>
-        <x>90</x>
+        <x>80</x>
         <y>180</y>
-        <width>431</width>
+        <width>541</width>
         <height>44</height>
        </rect>
       </property>
@@ -914,8 +904,8 @@
        <rect>
         <x>80</x>
         <y>240</y>
-        <width>471</width>
-        <height>31</height>
+        <width>541</width>
+        <height>36</height>
        </rect>
       </property>
       <property name="frameShape">
@@ -924,59 +914,43 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <widget class="QLabel" name="medicalhistory_cancer_label">
-       <property name="geometry">
-        <rect>
-         <x>40</x>
-         <y>0</y>
-         <width>55</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>cancer</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="medicalhistory_cancer_check1">
-       <property name="geometry">
-        <rect>
-         <x>130</x>
-         <y>10</y>
-         <width>131</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="medicalhistory_cancer_check2">
-       <property name="geometry">
-        <rect>
-         <x>268</x>
-         <y>10</y>
-         <width>131</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QLabel" name="medicalhistory_cancer_label">
+         <property name="text">
+          <string>cancer</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="medicalhistory_cancer_check1">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="medicalhistory_cancer_check2">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
      <widget class="QFrame" name="medicalhistory_leukemia_frame">
       <property name="geometry">
        <rect>
-        <x>110</x>
+        <x>80</x>
         <y>280</y>
-        <width>441</width>
-        <height>41</height>
+        <width>541</width>
+        <height>36</height>
        </rect>
       </property>
       <property name="frameShape">
@@ -985,59 +959,43 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <widget class="QLabel" name="medicalhistory_leukemia_label">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>0</y>
-         <width>55</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>leukemia</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="medicalhistory_leukemia_check1">
-       <property name="geometry">
-        <rect>
-         <x>150</x>
-         <y>10</y>
-         <width>131</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="medicalhistory_leukemia_check1_2">
-       <property name="geometry">
-        <rect>
-         <x>288</x>
-         <y>10</y>
-         <width>131</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QLabel" name="medicalhistory_leukemia_label">
+         <property name="text">
+          <string>leukemia</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="medicalhistory_leukemia_check1">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="medicalhistory_leukemia_check1_2">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
      <widget class="QFrame" name="medicalhistory_heartprob_frame">
       <property name="geometry">
        <rect>
         <x>80</x>
         <y>330</y>
-        <width>481</width>
-        <height>41</height>
+        <width>541</width>
+        <height>36</height>
        </rect>
       </property>
       <property name="frameShape">
@@ -1046,51 +1004,48 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <widget class="QLabel" name="medicalhistory_heartprob_label">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>10</y>
-         <width>141</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>heart problems</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="medicalhistory_heasrtprob_check1">
-       <property name="geometry">
-        <rect>
-         <x>160</x>
-         <y>10</y>
-         <width>131</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="medicalhistory_heasrtprob_check2">
-       <property name="geometry">
-        <rect>
-         <x>298</x>
-         <y>10</y>
-         <width>131</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="QLabel" name="medicalhistory_heartprob_label">
+         <property name="text">
+          <string>heart problems</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="medicalhistory_heasrtprob_check1">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="medicalhistory_heasrtprob_check2">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QPushButton" name="pushButton_5">
+      <property name="geometry">
+       <rect>
+        <x>400</x>
+        <y>490</y>
+        <width>75</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Save</string>
+      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="inventory">
