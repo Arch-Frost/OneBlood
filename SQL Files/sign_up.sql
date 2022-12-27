@@ -24,9 +24,9 @@ CREATE TABLE  IF NOT EXISTS  `Registered_Accounts` (
 );
 
 CREATE TABLE  IF NOT EXISTS  `Sessions` (
-  `SessionID` INT,
+  `SessionID` INT AUTO_INCREMENT,
   `UserID` INT,
-  `Login Date` DATE,
+  `Login Date` DATETIME DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`SessionID`),
   CONSTRAINT sess_user_fk FOREIGN KEY (UserID) REFERENCES Registered_Accounts(UserID)  
 );
