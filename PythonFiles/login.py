@@ -14,7 +14,7 @@ class Ui_MainWindow(object):
     mydb = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="psudo",
+            password="qwerty123",
             database="login")
 
     def setupUi(self, MainWindow):

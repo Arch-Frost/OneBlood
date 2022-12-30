@@ -8,8 +8,8 @@ CREATE TABLE  IF NOT EXISTS  `Medical_History` (
   `Malaria` BOOLEAN,
   `Cancer` BOOLEAN,
   `Leukemia` BOOLEAN,
-  `Heart Problems` BOOLEAN,
-  `Lung Problems` BOOLEAN,
+  `Heart_Problems` BOOLEAN,
+  `Lung_Problems` BOOLEAN,
   `Hepatitis` BOOLEAN,
   PRIMARY KEY (Donation_Date)
 );
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS  `User` (
 CREATE TABLE  IF NOT EXISTS  `Donor` (
   `DonorID` INT AUTO_INCREMENT,
   `UserID` INT,
-  `Last_Donation` DATETIME,
+  `Last_Donation` DATE,
   PRIMARY KEY (`DonorID`)
 );
 
@@ -85,6 +85,4 @@ ALTER TABLE Patient_Transaction
 ADD CONSTRAINT pt_patient_fk FOREIGN KEY (PatientID) REFERENCES Patient(PatientID);
 ALTER TABLE Inventory
 ADD CONSTRAINT IV_DI_fk FOREIGN KEY (DonationID) REFERENCES Donor_Transaction(DonationID);
-
--- Insert values into donor table
 

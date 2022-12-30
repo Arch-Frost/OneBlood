@@ -257,6 +257,32 @@
        </property>
       </item>
      </widget>
+     <widget class="QLabel" name="registeruser_donationdate_label">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>260</y>
+        <width>101</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>donation date</string>
+      </property>
+     </widget>
+     <widget class="QDateEdit" name="registeruser_donationdate_textfield">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>260</y>
+        <width>110</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="acceptDrops">
+       <bool>false</bool>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="manage_users">
      <widget class="QLabel" name="manageuser_label">
