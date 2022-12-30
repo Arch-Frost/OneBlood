@@ -8,6 +8,7 @@
 
 from PyQt6 import QtCore, QtGui, QtWidgets
 import mysql.connector
+from dashboard import Ui_MainWindow as dashboard
 
 class Ui_MainWindow(object):
     mydb = mysql.connector.connect(
@@ -207,7 +208,15 @@ class Ui_MainWindow(object):
             self.mydb.commit()
 
             print("session created")
-
+            self.goToDashboard()
+    
+    def goToDashboard(self):
+        self.dashboard = QtWidgets.QMainWindow()
+        self.ui = dashboard()
+        self.ui.setupUi(self.dashboard)
+        self.dashboard.show()
+        MainWindow.hide()
+    
 
 
 if __name__ == "__main__":

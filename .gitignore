@@ -1,3 +1,7 @@
 .venv/
 Forms/__pycache__
 PythonFiles/__pycache__
+Forms/table.ui
+PythonFiles/table.py
+Forms/dashboard.ui.autosave
+SQL Files/temp.sql
