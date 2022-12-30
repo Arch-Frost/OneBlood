@@ -431,10 +431,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.pushButton_11.clicked.connect(self.buttonClick)
         self.pushButton_3.clicked.connect(self.buttonClick)
         self.pushButton_4.clicked.connect(self.buttonClick)
-        
+
         self.donate_donate_button.clicked.connect(self.showMedicalHistory)
         self.manageuser_save_button.clicked.connect(self.saveManageUserData)
         self.manageuser_reset_button.clicked.connect(self.clearManageUserData)
+        self.fetchUserData()
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -507,6 +508,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.pushButton_4.setText(_translate("MainWindow", "inventory"))
         self.pushButton_11.setText(_translate("MainWindow", "blood transfer"))
 
+    '''
+    Self Defined Functions
+    ''' 
     def buttonClick(self):
         btn = self.sender()
         btnName = btn.objectName()
@@ -517,7 +521,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         # Manage User Page
         if btnName == "pushButton_2":
-            self.manageuser_table.clear()
+            self.manageuser_table.clearContents()
+            self.clearManageUserData()
             self.fetchUserData()
             self.switch_page(1)
         
@@ -539,30 +544,55 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def showMedicalHistory(self):
         self.stackedWidget.setCurrentIndex(4)
 
+    '''
+    Functions for Manage User Page
+    '''
+
     def saveManageUserData(self):
         print("saving user data")
         # Save the data to the database
         mycursor = self.mydb.cursor(buffered=True)
-        sql = "UPDATE users SET name = %s, phone = %s, blood_group = %s WHERE id = %s"
+        sql = "UPDATE user SET name = %s, phone_number = %s, blood_group = %s WHERE userid = %s"
         val = (self.manageuser_name_textfield.text(), self.manageuser_phone_textfield.text(), self.manageuser_bloodgrp_combobox.currentText(), self.manageUserSelectedID)
         mycursor.execute(sql, val)
+
+        status = self.manageuser_status_combobox.currentText()
+        if status == "Donor":
+            sql = "Select * from donor where userID = %s"
+            val = (self.manageUserSelectedID,)
+            mycursor.execute(sql, val)
+            result = mycursor.fetchall()
+            if len(result) == 0:
+                sql = "INSERT INTO donor (userid) SELECT userid FROM user WHERE userid = %s"
+                val = (self.manageUserSelectedID,)
+                mycursor.execute(sql, val)
+        else:
+            sql = "SELECT * FROM patient WHERE userid = %s"
+            val = (self.manageUserSelectedID,)
+            mycursor.execute(sql, val)
+            result = mycursor.fetchall()
+            if len(result) == 0:
+                sql = "INSERT INTO patient (userid) SELECT userid FROM user WHERE userid = %s"
+                val = (self.manageUserSelectedID,)
+                mycursor.execute(sql, val)
+        
         self.mydb.commit()
         print(mycursor.rowcount, "record(s) affected")
         
-        self.manageuser_table.clear()
+        self.manageuser_table.clearContents()
         self.fetchUserData()
-        self.manageuser_name_textfield.setText("")
-        self.manageuser_phone_textfield.setText("")
-        self.manageuser_bloodgrp_combobox.setCurrentText("")
-        self.manageuser_status_combobox.setCurrentText("")
+        self.clearManageUserData()
 
     def manageUserTableClicked(self):
-        self.manageuser_name_textfield.setText(self.manageuser_table.item(self.manageuser_table.currentRow(), 0).text())
-        self.manageuser_phone_textfield.setText(self.manageuser_table.item(self.manageuser_table.currentRow(), 1).text())
-        self.manageuser_bloodgrp_combobox.setCurrentText(self.manageuser_table.item(self.manageuser_table.currentRow(), 2).text())
-        self.manageuser_status_combobox.setCurrentText(self.manageuser_table.item(self.manageuser_table.currentRow(), 3).text())
+        name = self.manageuser_table.item(self.manageuser_table.currentRow(), 1).text()
+        phone = self.manageuser_table.item(self.manageuser_table.currentRow(), 4).text()
+        bloodgrp = self.manageuser_table.item(self.manageuser_table.currentRow(), 5).text()
+        status = self.manageuser_table.item(self.manageuser_table.currentRow(), 7).text()
 
-        manageUserSelectedID = self.manageuser_table.item(self.manageuser_table.currentRow(), 0).text()
+        self.manageuser_name_textfield.setText(name)
+        self.manageuser_phone_textfield.setText(phone)
+        self.manageuser_bloodgrp_combobox.setCurrentText(bloodgrp)
+        self.manageuser_status_combobox.setCurrentText(status)
 
     def fetchUserData(self):
         print("fetching user data")
@@ -570,25 +600,32 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         mycursor = self.mydb.cursor(buffered=True)
         mycursor.execute("SELECT * FROM user")
         myresult = mycursor.fetchall()
+        print(myresult)
         for x in myresult:
             rowPosition = self.manageuser_table.rowCount()
             self.manageuser_table.insertRow(rowPosition)
-            self.manageuser_table.setItem(rowPosition, 0, QtWidgets.QTableWidgetItem(x[1]))
-            self.manageuser_table.setItem(rowPosition, 1, QtWidgets.QTableWidgetItem(x[2]))
-            age = datetime.datetime.now().year - int(datetime.datetime.strptime(x[3], "%Y-%m-%d").year)
-            self.manageuser_table.setItem(rowPosition, 2, QtWidgets.QTableWidgetItem(age))
-            self.manageuser_table.setItem(rowPosition, 3, QtWidgets.QTableWidgetItem(x[4]))
-            self.manageuser_table.setItem(rowPosition, 4, QtWidgets.QTableWidgetItem(x[5]))
-            self.manageuser_table.setItem(rowPosition, 5, QtWidgets.QTableWidgetItem(x[6]))
-            self.manageuser_table.setItem(rowPosition, 6, QtWidgets.QTableWidgetItem(x[7]))
+            self.manageuser_table.setItem(rowPosition, 0, QtWidgets.QTableWidgetItem(f"{x[0]}"))
+            self.manageuser_table.setItem(rowPosition, 1, QtWidgets.QTableWidgetItem(x[1]))
+            age = self.calculate_age(x[2])
+            self.manageuser_table.setItem(rowPosition, 2, QtWidgets.QTableWidgetItem(f"{age}"))
+            self.manageuser_table.setItem(rowPosition, 3, QtWidgets.QTableWidgetItem(x[3]))
+            self.manageuser_table.setItem(rowPosition, 4, QtWidgets.QTableWidgetItem(x[4]))
+            self.manageuser_table.setItem(rowPosition, 5, QtWidgets.QTableWidgetItem(x[5]))
+            self.manageuser_table.setItem(rowPosition, 6, QtWidgets.QTableWidgetItem(x[6]))
+            self.manageuser_table.setItem(rowPosition, 7, QtWidgets.QTableWidgetItem("Status"))
 
         self.mydb.commit()
 
     def clearManageUserData(self):
+        print("clearing user data")
         self.manageuser_name_textfield.setText("")
         self.manageuser_phone_textfield.setText("")
         self.manageuser_bloodgrp_combobox.setCurrentText("")
         self.manageuser_status_combobox.setCurrentText("")
+
+    def calculate_age(self, dob):
+        today = datetime.date.today()
+        return today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
 
 if __name__ == "__main__":
     import sys

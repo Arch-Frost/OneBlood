@@ -17,7 +17,7 @@ CREATE TABLE  IF NOT EXISTS  `Medical_History` (
 CREATE TABLE IF NOT EXISTS  `User` (
   `UserID` INT AUTO_INCREMENT,
   `Name` VARCHAR(20),
-  `date_of_birth` DATETIME NOT NULL,
+  `date_of_birth` DATE NOT NULL,
   `Gender` VARCHAR(1),
   `Phone_Number` VARCHAR(11),
   `Blood_Group` VARCHAR(3),
