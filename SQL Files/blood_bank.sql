@@ -8,8 +8,8 @@ CREATE TABLE  IF NOT EXISTS  `Medical_History` (
   `Malaria` BOOLEAN,
   `Cancer` BOOLEAN,
   `Leukemia` BOOLEAN,
-  `Heart Problems` BOOLEAN,
-  `Lung Problems` BOOLEAN,
+  `Heart_Problems` BOOLEAN,
+  `Lung_Problems` BOOLEAN,
   `Hepatitis` BOOLEAN,
   PRIMARY KEY (Donation_Date)
 );
@@ -19,8 +19,8 @@ CREATE TABLE  IF NOT EXISTS  `User` (
   `Name` VARCHAR(20),
   `date_of_birth` date  NOT NULL,
   `Gender` VARCHAR(1),
-  `Phone Number` VARCHAR(11),
-  `Blood Group` VARCHAR(3),
+  `Phone_Number` VARCHAR(11),
+  `Blood_Group` VARCHAR(3),
   `Address` VARCHAR(40),
   PRIMARY KEY (`UserID`)
 );
@@ -28,7 +28,7 @@ CREATE TABLE  IF NOT EXISTS  `User` (
 CREATE TABLE  IF NOT EXISTS  `Donor` (
   `DonorID` INT AUTO_INCREMENT,
   `UserID` INT,
-  `Last Donation` DATE,
+  `Last_Donation` DATE,
   PRIMARY KEY (`DonorID`)
 );
 
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS  `Donor_Transaction` (
   `DonationID` INT AUTO_INCREMENT,
   `BloodBagID` INT,
   `DonorID` INT,
-  `Blood Group` VARCHAR(3),
+  `Blood_Group` VARCHAR(3),
   `Donation_Date` DATE NOT NULL,
   PRIMARY KEY (`DonationID`)
 );
@@ -53,7 +53,7 @@ CREATE TABLE  IF NOT EXISTS  `Inventory` (
   `DonationDate` DATE  NOT NULL,
   `ExpirationDate` DATE  NOT NULL,
   `DonationID` INT,
-  `Blood Group` VARCHAR(3),
+  `Blood_Group` VARCHAR(3),
   `infected`  bool,
   PRIMARY KEY (`BloodBagID`)
   
@@ -85,6 +85,4 @@ ALTER TABLE Patient_Transaction
 ADD CONSTRAINT pt_patient_fk FOREIGN KEY (PatientID) REFERENCES Patient(PatientID);
 ALTER TABLE Inventory
 ADD CONSTRAINT IV_DI_fk FOREIGN KEY (DonationID) REFERENCES Donor_Transaction(DonationID);
-
--- Insert values into donor table
 
