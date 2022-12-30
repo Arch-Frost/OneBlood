@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>828</width>
     <height>600</height>
    </rect>
   </property>
@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>5</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="register_user">
      <widget class="QLabel" name="registeruser_name_label">
@@ -257,23 +257,10 @@
        </property>
       </item>
      </widget>
-     <widget class="QLabel" name="registeruser_donationdate_label">
+     <widget class="QDateEdit" name="registeruser_lastdonation_textfield">
       <property name="geometry">
        <rect>
-        <x>270</x>
-        <y>260</y>
-        <width>101</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>donation date</string>
-      </property>
-     </widget>
-     <widget class="QDateEdit" name="registeruser_donationdate_textfield">
-      <property name="geometry">
-       <rect>
-        <x>380</x>
+        <x>360</x>
         <y>260</y>
         <width>110</width>
         <height>22</height>
@@ -281,6 +268,19 @@
       </property>
       <property name="acceptDrops">
        <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="registeruser_lastdonation_label">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>260</y>
+        <width>81</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Last Donation</string>
       </property>
      </widget>
     </widget>
@@ -588,10 +588,10 @@
      <widget class="QTableWidget" name="donate_table">
       <property name="geometry">
        <rect>
-        <x>110</x>
-        <y>280</y>
-        <width>501</width>
-        <height>192</height>
+        <x>70</x>
+        <y>281</y>
+        <width>541</width>
+        <height>191</height>
        </rect>
       </property>
       <property name="editTriggers">
@@ -606,6 +606,36 @@
       <property name="selectionBehavior">
        <enum>QAbstractItemView::SelectRows</enum>
       </property>
+      <column>
+       <property name="text">
+        <string>Donor ID</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Name</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Age</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Gender</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Blood Group</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Last Donation</string>
+       </property>
+      </column>
      </widget>
     </widget>
     <widget class="QWidget" name="blood_transfer">
@@ -672,7 +702,7 @@
        <rect>
         <x>90</x>
         <y>240</y>
-        <width>241</width>
+        <width>521</width>
         <height>251</height>
        </rect>
       </property>
@@ -688,6 +718,31 @@
       <property name="selectionBehavior">
        <enum>QAbstractItemView::SelectRows</enum>
       </property>
+      <column>
+       <property name="text">
+        <string>Patient ID</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Name</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Age</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Gender</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Blood Group</string>
+       </property>
+      </column>
      </widget>
      <widget class="QPushButton" name="bloodtransfer_transfer_button">
       <property name="geometry">
