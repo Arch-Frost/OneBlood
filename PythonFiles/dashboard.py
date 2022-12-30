@@ -10,8 +10,9 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 import mysql.connector
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
-    manageUserSelectedID = 0
-    donorSelectedID = 0
+    manageUserSelectedID = 0;
+    DonorSelectedID = 0;
+    PatientSelectedID = 0;
 
     mydb = mysql.connector.connect(
         host="localhost",
@@ -470,6 +471,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         self.manageuser_table.itemClicked.connect(self.manageUserTableClicked)
         self.donate_table.itemClicked.connect(self.DonorTableClicked)
+        self.bloodtransfer_patients_table.itemClicked.connect(self.PatientTableClicked)
+        
 
         self.pushButton.clicked.connect(self.buttonClick)
         self.pushButton_2.clicked.connect(self.buttonClick)
@@ -614,11 +617,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         if btnName == "pushButton_3":
             self.fetchDonorData()
             self.switch_page(2)
+            self.fetchDonorData()
             
         # Blood Transfer Page
         if btnName == "pushButton_11":
             self.switch_page(3)
-        
+            self.fetchPatientData()
         # Inventory Page
         if btnName == "pushButton_4":
             self.switch_page(5)
@@ -860,6 +864,91 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
 
 
+    def fetchDonorData(self):
+        print("fetching user data")
+        mycursor = self.mydb.cursor(buffered=True)
+
+        mycursor.execute("SELECT DonorID,Name,date_of_birth,gender,blood_group,Last_Donation FROM user INNER JOIN donor ON user.userID = donor.userID")
+        myresult = mycursor.fetchall()
+        self.donate_table.clearContents()
+        self.donate_table.setRowCount(0)
+        print(myresult)
+        for x in myresult:
+            rowPosition = self.donate_table.rowCount()
+            self.donate_table.insertRow(rowPosition)
+            self.donate_table.setItem(rowPosition, 0, QtWidgets.QTableWidgetItem(f"{x[0]}"))
+            self.donate_table.setItem(rowPosition, 1, QtWidgets.QTableWidgetItem(x[1]))
+            age = self.calculate_age(x[2])
+            self.donate_table.setItem(rowPosition, 2, QtWidgets.QTableWidgetItem(f"{age}"))
+            self.donate_table.setItem(rowPosition, 3, QtWidgets.QTableWidgetItem(x[3]))
+            self.donate_table.setItem(rowPosition, 4, QtWidgets.QTableWidgetItem(x[4]))
+            lastdonation = datetime.datetime.strftime(x[5], '%d/%m/%Y')
+            self.donate_table.setItem(rowPosition, 5, QtWidgets.QTableWidgetItem(f"{lastdonation}" ))    
+
+        self.mydb.commit()
+
+    
+  
+
+    def DonorTableClicked(self):
+
+
+        currentRow = self.donate_table.currentRow()
+        donorID = self.donate_table.item(currentRow, 0).text()
+        name = self.donate_table.item(currentRow, 1).text()
+        bloodgrp = self.donate_table.item(currentRow, 4).text()
+
+        self.donate_name_textfield.setText(name)
+     
+        self.donate_bloodgrp_textfield.setText(bloodgrp)
+    
+
+        mycursor = self.mydb.cursor(buffered=True)
+        mycursor.execute("SELECT userID FROM donor WHERE DonorID = %s", (donorID,))
+        userID = mycursor.fetchone()
+        self.donorSelectedID = userID[0]
+        print(self.donorSelectedID)
+
+    def fetchPatientData(self):
+        print("fetching patient data")
+        mycursor = self.mydb.cursor(buffered=True)
+
+        mycursor.execute("SELECT PatientID,Name,date_of_birth,gender,blood_group FROM user INNER JOIN patient ON user.userID = patient.userID")
+        myresult = mycursor.fetchall()
+        self.bloodtransfer_patients_table.clearContents()
+        self.bloodtransfer_patients_table.setRowCount(0)
+        print(myresult)
+        for x in myresult:
+            rowPosition = self.bloodtransfer_patients_table.rowCount()
+            self.bloodtransfer_patients_table.insertRow(rowPosition)
+            self.bloodtransfer_patients_table.setItem(rowPosition, 0, QtWidgets.QTableWidgetItem(f"{x[0]}"))
+            self.bloodtransfer_patients_table.setItem(rowPosition, 1, QtWidgets.QTableWidgetItem(x[1]))
+            age = self.calculate_age(x[2])
+            self.bloodtransfer_patients_table.setItem(rowPosition, 2, QtWidgets.QTableWidgetItem(f"{age}"))
+            self.bloodtransfer_patients_table.setItem(rowPosition, 3, QtWidgets.QTableWidgetItem(x[3]))
+            self.bloodtransfer_patients_table.setItem(rowPosition, 4, QtWidgets.QTableWidgetItem(x[4]))
+           
+        self.mydb.commit()
+
+    
+    def PatientTableClicked(self):
+
+
+        currentRow = self.bloodtransfer_patients_table.currentRow()
+        PatientID = self.bloodtransfer_patients_table.item(currentRow, 0).text()
+        name = self.bloodtransfer_patients_table.item(currentRow, 1).text()
+        bloodgrp = self.bloodtransfer_patients_table.item(currentRow, 4).text()
+
+        self.bloodtransfer_name_textfield.setText(name)
+     
+        self.bloodtransfer_bloodgrp_textfield.setText(bloodgrp)
+    
+
+        mycursor = self.mydb.cursor(buffered=True)
+        mycursor.execute("SELECT userID FROM patient WHERE PatientID = %s", (PatientID,))
+        userID = mycursor.fetchone()
+        self.PatientSelectedID = userID[0]
+        print(self.PatientSelectedID)
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
