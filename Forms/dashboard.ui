@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>828</width>
     <height>600</height>
    </rect>
   </property>
@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>5</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="register_user">
      <widget class="QLabel" name="registeruser_name_label">
@@ -257,23 +257,10 @@
        </property>
       </item>
      </widget>
-     <widget class="QLabel" name="registeruser_donationdate_label">
+     <widget class="QDateEdit" name="registeruser_lastdonation_textfield">
       <property name="geometry">
        <rect>
-        <x>270</x>
-        <y>260</y>
-        <width>101</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>donation date</string>
-      </property>
-     </widget>
-     <widget class="QDateEdit" name="registeruser_donationdate_textfield">
-      <property name="geometry">
-       <rect>
-        <x>380</x>
+        <x>360</x>
         <y>260</y>
         <width>110</width>
         <height>22</height>
@@ -281,6 +268,19 @@
       </property>
       <property name="acceptDrops">
        <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="registeruser_lastdonation_label">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>260</y>
+        <width>81</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Last Donation</string>
       </property>
      </widget>
     </widget>
