@@ -10,12 +10,13 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 import mysql.connector
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
-    manageUserSelectedID = 0;
+    manageUserSelectedID = 0
+    donorSelectedID = 0
 
     mydb = mysql.connector.connect(
         host="localhost",
         user="root",
-        password="qwerty123",
+        password="psudo",
         database="blood_bank"
     )
 
@@ -468,6 +469,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.registeruser_reset_button.clicked.connect(self.register_user_reset)
 
         self.manageuser_table.itemClicked.connect(self.manageUserTableClicked)
+        self.donate_table.itemClicked.connect(self.DonorTableClicked)
 
         self.pushButton.clicked.connect(self.buttonClick)
         self.pushButton_2.clicked.connect(self.buttonClick)
@@ -610,6 +612,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
         # Donate Page
         if btnName == "pushButton_3":
+            self.fetchDonorData()
             self.switch_page(2)
             
         # Blood Transfer Page
@@ -779,6 +782,82 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     '''
     Donate Page Functions
     '''
+
+    def fetchDonorData(self):
+        print("fetching user data")
+        mycursor = self.mydb.cursor(buffered=True)
+
+        mycursor.execute("SELECT DonorID,Name,date_of_birth,gender,blood_group,Last_Donation FROM user INNER JOIN donor ON user.userID = donor.userID")
+        myresult = mycursor.fetchall()
+        self.donate_table.clearContents()
+        self.donate_table.setRowCount(0)
+        print(myresult)
+        for x in myresult:
+            rowPosition = self.donate_table.rowCount()
+            self.donate_table.insertRow(rowPosition)
+            self.donate_table.setItem(rowPosition, 0, QtWidgets.QTableWidgetItem(f"{x[0]}"))
+            self.donate_table.setItem(rowPosition, 1, QtWidgets.QTableWidgetItem(x[1]))
+            age = self.calculate_age(x[2])
+            self.donate_table.setItem(rowPosition, 2, QtWidgets.QTableWidgetItem(f"{age}"))
+            self.donate_table.setItem(rowPosition, 3, QtWidgets.QTableWidgetItem(x[3]))
+            self.donate_table.setItem(rowPosition, 4, QtWidgets.QTableWidgetItem(x[4]))
+            lastdonation = datetime.datetime.strftime(x[5], '%d/%m/%Y')
+            self.donate_table.setItem(rowPosition, 5, QtWidgets.QTableWidgetItem(f"{lastdonation}" ))    
+
+        self.mydb.commit()
+
+        
+
+    def DonorTableClicked(self):
+        currentRow = self.donate_table.currentRow()
+        donorID = self.donate_table.item(currentRow, 0).text()
+        name = self.donate_table.item(currentRow, 1).text()
+        bloodgrp = self.donate_table.item(currentRow, 5).text()
+ 
+        self.donate_name_textfield.setText(name)
+        self.donate_bloodgrp_textfield.setText(bloodgrp) 
+
+        mycursor = self.mydb.cursor(buffered=True)
+        mycursor.execute("SELECT userID FROM donor WHERE DonorID = %s", (donorID,))
+        userID = mycursor.fetchone()
+        self.donorSelectedID = userID[0]
+        print(self.donorSelectedID)
+
+    '''
+    Medical History Page Functions    
+    '''
+
+    def createDonationTransaction(self):
+        mycursor = self.mydb.cursor(buffered=True)
+        mycursor.execute("INSERT INTO donation_transaction(DonorID) VALUES (%s)", (self.donorSelectedID,))
+        mycursor.execute("SELECT DonationID FROM donation_transaction WHERE DonorID = %s", (self.donorSelectedID,))
+        donationID = mycursor.fetchone()
+        donationID = donationID[0]
+        print(donationID)
+        self.donationID = donationID
+        self.mydb.commit()
+
+    def getMedicalHistory(self):
+        hiv = self.medicalhistory_HIV_check1.isChecked()
+        malaria = self.medicalhistory_malaria_check1.isChecked()
+        cancer = self.medicalhistory_cancer_check1.isChecked()
+        leukemia = self.medicalhistory_leukemia_check1.isChecked()
+        heart = self.medicalhistory_heasrtprob_check1.isChecked()
+        lungs = self.medicalhistory_lungsprob_check1.isChecked()
+        hepatitis = self.medicalhistory_hepatitis_check1.isChecked()
+
+        mycursor = self.mydb.cursor(buffered=True)
+        mycursor.execute("SELECT DonationID FROM donor_transaction WHERE DonorID = %s", (self.donorSelectedID,))
+        donationID = mycursor.fetchone()
+        donationID = donationID[0]
+
+        mycursor.execute("INSERT INTO medical_history(DonationID, HIV_Positive, Malaria, Cancer, Leukemia, Heart_Problems, Lungs_Problems, Hepatitis) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (donationID, hiv, malaria, cancer, leukemia, heart, lungs, hepatitis))
+
+        self.mydb.commit()
+
+        
+
+
 
 
 if __name__ == "__main__":

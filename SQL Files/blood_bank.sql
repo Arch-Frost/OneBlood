@@ -3,8 +3,8 @@ Use blood_bank;
 
 CREATE TABLE  IF NOT EXISTS  `Medical_History` (
   `DonationID` INT,
-  `Donation_Date` DATE,
-  `HIV Positve` BOOLEAN,
+  `Donation_Date` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `HIV_Positve` BOOLEAN,
   `Malaria` BOOLEAN,
   `Cancer` BOOLEAN,
   `Leukemia` BOOLEAN,

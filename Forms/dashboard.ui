@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>4</number>
     </property>
     <widget class="QWidget" name="register_user">
      <widget class="QLabel" name="registeruser_name_label">
@@ -875,6 +875,9 @@
          <property name="text">
           <string/>
          </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
          <property name="autoExclusive">
           <bool>true</bool>
          </property>
@@ -920,6 +923,9 @@
          <property name="text">
           <string/>
          </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
          <property name="autoExclusive">
           <bool>true</bool>
          </property>
@@ -955,6 +961,9 @@
          <property name="text">
           <string/>
          </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
          <property name="autoExclusive">
           <bool>true</bool>
          </property>
@@ -967,6 +976,9 @@
         <widget class="QCheckBox" name="medicalhistory_HIV_check2">
          <property name="text">
           <string/>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
          <property name="autoExclusive">
           <bool>true</bool>
@@ -1013,6 +1025,9 @@
          <property name="text">
           <string/>
          </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
          <property name="autoExclusive">
           <bool>true</bool>
          </property>
@@ -1057,6 +1072,9 @@
         <widget class="QCheckBox" name="medicalhistory_cancer_check2">
          <property name="text">
           <string/>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
          <property name="autoExclusive">
           <bool>true</bool>
@@ -1103,6 +1121,9 @@
          <property name="text">
           <string/>
          </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
          <property name="autoExclusive">
           <bool>true</bool>
          </property>
@@ -1147,6 +1168,9 @@
         <widget class="QCheckBox" name="medicalhistory_heasrtprob_check2">
          <property name="text">
           <string/>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
          <property name="autoExclusive">
           <bool>true</bool>
