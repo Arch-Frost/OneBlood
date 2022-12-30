@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="register_user">
      <widget class="QLabel" name="registeruser_name_label">
@@ -411,7 +411,7 @@
        </property>
       </item>
      </widget>
-     <widget class="QTableView" name="manageuser_table">
+     <widget class="QTableWidget" name="manageuser_table">
       <property name="geometry">
        <rect>
         <x>80</x>
@@ -432,6 +432,46 @@
       <property name="selectionBehavior">
        <enum>QAbstractItemView::SelectRows</enum>
       </property>
+      <column>
+       <property name="text">
+        <string>UserID</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Name</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Age</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Gender</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Phone Number</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Blood Group</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Address</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Status</string>
+       </property>
+      </column>
      </widget>
     </widget>
     <widget class="QWidget" name="donate">
@@ -601,7 +641,7 @@
        <bool>true</bool>
       </property>
      </widget>
-     <widget class="QTableView" name="bloodtransfer_patients_table">
+     <widget class="QTableWidget" name="bloodtransfer_patients_table">
       <property name="geometry">
        <rect>
         <x>90</x>

@@ -14,13 +14,13 @@ CREATE TABLE  IF NOT EXISTS  `Medical_History` (
   PRIMARY KEY (Donation_Date)
 );
 
-CREATE TABLE  IF NOT EXISTS  `User` (
+CREATE TABLE IF NOT EXISTS  `User` (
   `UserID` INT AUTO_INCREMENT,
   `Name` VARCHAR(20),
-  `date_of_birth` date  NOT NULL,
+  `date_of_birth` DATETIME NOT NULL,
   `Gender` VARCHAR(1),
-  `Phone Number` VARCHAR(11),
-  `Blood Group` VARCHAR(3),
+  `Phone_Number` VARCHAR(11),
+  `Blood_Group` VARCHAR(3),
   `Address` VARCHAR(40),
   PRIMARY KEY (`UserID`)
 );
@@ -28,7 +28,7 @@ CREATE TABLE  IF NOT EXISTS  `User` (
 CREATE TABLE  IF NOT EXISTS  `Donor` (
   `DonorID` INT AUTO_INCREMENT,
   `UserID` INT,
-  `Last Donation` DATE,
+  `Last_Donation` DATETIME,
   PRIMARY KEY (`DonorID`)
 );
 
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS  `Donor_Transaction` (
   `DonationID` INT AUTO_INCREMENT,
   `BloodBagID` INT,
   `DonorID` INT,
-  `Blood Group` VARCHAR(3),
+  `Blood_Group` VARCHAR(3),
   `Donation_Date` DATE NOT NULL,
   PRIMARY KEY (`DonationID`)
 );
@@ -53,7 +53,7 @@ CREATE TABLE  IF NOT EXISTS  `Inventory` (
   `DonationDate` DATE  NOT NULL,
   `ExpirationDate` DATE  NOT NULL,
   `DonationID` INT,
-  `Blood Group` VARCHAR(3),
+  `Blood_Group` VARCHAR(3),
   `infected`  bool,
   PRIMARY KEY (`BloodBagID`)
   
@@ -63,8 +63,8 @@ CREATE TABLE  IF NOT EXISTS  `Patient_Transaction` (
   `RequestID` INT AUTO_INCREMENT,
   `BloodBagID` INT,
   `PatientID` INT,
-  `Blood Group` VARCHAR(3),
-  `Request Date` DATE,
+  `Blood_Group` VARCHAR(3),
+  `Request_Date` DATE,
   PRIMARY KEY (`RequestID`)
 );
 
