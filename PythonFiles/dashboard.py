@@ -627,6 +627,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
         # Inventory Page
         if btnName == "pushButton_4":
+            self.fetchInventoryData()
             self.switch_page(5)
 
     def switch_page(self, page):
@@ -645,8 +646,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         mycursor = self.mydb.cursor(buffered=True)
         sql = "UPDATE user SET name = %s, phone_number = %s, blood_group = %s WHERE userid = %s"
         val = (self.manageuser_name_textfield.text(), self.manageuser_phone_textfield.text(), self.manageuser_bloodgrp_combobox.currentText(), self.manageUserSelectedID)
-        print(val)
-        print(self.manageUserSelectedID)
+        # print(val)
+        print("ManageUserSelectedID: ", self.manageUserSelectedID)
         mycursor.execute(sql, val)
 
         status = self.manageuser_status_combobox.currentText()
@@ -797,7 +798,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         myresult = mycursor.fetchall()
         self.donate_table.clearContents()
         self.donate_table.setRowCount(0)
-        print(myresult)
+        # print(myresult)
         for x in myresult:
             rowPosition = self.donate_table.rowCount()
             self.donate_table.insertRow(rowPosition)
@@ -825,7 +826,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         mycursor.execute("SELECT userID FROM donor WHERE DonorID = %s", (donorID,))
         userID = mycursor.fetchone()
         self.donorSelectedID = userID[0]
-        print(self.donorSelectedID)
+        print("DonorSelectedID: ", self.donorSelectedID)
 
     def donateButtonClicked(self):
         self.showMedicalHistoryPage()
@@ -842,7 +843,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         mycursor = self.mydb.cursor(buffered=True)
         mycursor.execute("INSERT INTO donor_transaction(DonorID, Blood_Group, Donation_Date) SELECT DonorID, Blood_Group, %s FROM Donor JOIN User USING (UserID) WHERE userID = %s", (f"{date}", self.donorSelectedID))
-        mycursor.execute("SELECT DonationID FROM donor_transaction WHERE DonorID = %s", (self.donorSelectedID,))
+        mycursor.execute("SELECT DonationID FROM donor_transaction WHERE DonorID = %s ORDER BY DonationID DESC", (self.donorSelectedID,))
         donationID = mycursor.fetchone()
         donationID = donationID[0]
         print("DonationID: ", donationID)
@@ -870,10 +871,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     def medicalHistorySaveButtonClicked(self):
         self.getMedicalHistory()
+        self.storeInInventory()
         self.donate_name_textfield.clear()
         self.donate_bloodgrp_textfield.clear()
         self.fetchDonorData()
-
         self.switch_page(2)
         return
 
@@ -889,7 +890,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         myresult = mycursor.fetchall()
         self.bloodtransfer_patients_table.clearContents()
         self.bloodtransfer_patients_table.setRowCount(0)
-        print(myresult)
+        # print(myresult)
         for x in myresult:
             rowPosition = self.bloodtransfer_patients_table.rowCount()
             self.bloodtransfer_patients_table.insertRow(rowPosition)
@@ -918,7 +919,74 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         mycursor.execute("SELECT userID FROM patient WHERE PatientID = %s", (PatientID,))
         userID = mycursor.fetchone()
         self.PatientSelectedID = userID[0]
-        print(self.PatientSelectedID)
+        print("PatientSelectedID: ", self.PatientSelectedID)
+
+    '''
+    Inventory Page Functions
+    '''
+
+    def fetchInventoryData(self):
+        print("fetching inventory data")
+        mycursor = self.mydb.cursor(buffered=True)
+
+        mycursor.execute("SELECT BloodBagID, DonationDate, ExpirationDate, DonationID, Blood_Group FROM inventory WHERE Infected = 0")
+        myresult = mycursor.fetchall()
+        self.inventory_table.clearContents()
+        self.inventory_table.setRowCount(0)
+        # print(myresult)
+        for x in myresult:
+            rowPosition = self.inventory_table.rowCount()
+            self.inventory_table.insertRow(rowPosition)
+            self.inventory_table.setItem(rowPosition, 0, QtWidgets.QTableWidgetItem(f"{x[0]}"))
+            donationDate = x[1].strftime("%d/%m/%Y")
+            self.inventory_table.setItem(rowPosition, 1, QtWidgets.QTableWidgetItem(f"{donationDate}"))
+            expirationDate = x[2].strftime("%d/%m/%Y")
+            self.inventory_table.setItem(rowPosition, 2, QtWidgets.QTableWidgetItem(f"{expirationDate}"))
+            self.inventory_table.setItem(rowPosition, 3, QtWidgets.QTableWidgetItem(f"{x[3]}"))
+            self.inventory_table.setItem(rowPosition, 4, QtWidgets.QTableWidgetItem(x[4]))
+        
+        self.mydb.commit()
+
+    def storeInInventory(self):
+        mycursor = self.mydb.cursor(buffered=True)
+        
+        mycursor.execute("SELECT medical_history.Donation_Date from Medical_History JOIN Donor_Transaction USING (DonationID) WHERE DonationID = %s", (self.donationID,))
+
+        donationDate = mycursor.fetchone()
+        donationDate = donationDate[0]
+        print("Donation Date: ", donationDate)
+
+        # Calculate expiry date from donation date
+        expiryDate = donationDate + datetime.timedelta(days=90)
+        # expiryDate = expiryDate.strftime('%Y-%m-%d')
+        print("Expiry Date: ", expiryDate)
+
+        donationID = self.donationID
+        print("DonationID: ", donationID)
+
+        mycursor.execute("SELECT Blood_Group FROM donor JOIN user WHERE DonorID = %s", (self.donorSelectedID,))
+
+        bloodGroup = mycursor.fetchone()
+        bloodGroup = bloodGroup[0]
+
+        if self.isInfected():
+            print("Infected")
+            mycursor.execute("INSERT INTO inventory(DonationID, Blood_Group, DonationDate, ExpirationDate, Infected) VALUES (%s, %s, %s, %s, 1)", (donationID, bloodGroup, f"{donationDate}" , f"{expiryDate}"))
+        else:
+            print("Not Infected")
+            mycursor.execute("INSERT INTO inventory(DonationID, Blood_Group, DonationDate, ExpirationDate, Infected) VALUES (%s, %s, %s, %s, 0)", (donationID, bloodGroup, f"{donationDate}" , f"{expiryDate}"))
+
+        self.mydb.commit()
+
+    def isInfected(self):
+        mycursor = self.mydb.cursor(buffered=True)
+        mycursor.execute("SELECT HIV_Positve, Malaria, Cancer, Leukemia, Heart_Problems, Lung_Problems, Hepatitis FROM Medical_History WHERE DonationID = %s ORDER BY Donation_Date DESC", (self.donationID,))
+        medicalHistory = mycursor.fetchone()
+        print("Medical History: ", medicalHistory)
+        for x in medicalHistory:
+            if x == 1:
+                return True
+        return False
 
 if __name__ == "__main__":
     import sys
