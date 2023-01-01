@@ -7,10 +7,12 @@
 
 
 import datetime
+import re
 from PyQt6 import QtCore, QtGui, QtWidgets
 import mysql.connector
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
+    donorID = 0
     manageUserSelectedID = 0;
     donorSelectedID = 0;
     PatientSelectedID = 0;
@@ -848,21 +850,35 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     '''
 
     def saveManageUserData(self):
-        # Validating the data
-        if self.manageuser_name_textfield.text() == "":
-            self.manageuser_name_textfield.setFocus()
-            return
-        if self.manageuser_phone_textfield.text() == "":
-            self.manageuser_phone_textfield.setFocus()
-            return
-        if self.manageuser_bloodgrp_combobox.currentText() == "":
-            self.manageuser_bloodgrp_combobox.setFocus()
-            return
-        if self.manageuser_status_combobox.currentText() == "":
-            self.manageuser_status_combobox.setFocus()
+        name = self.manageuser_name_textfield.text()
+        phone = self.manageuser_phone_textfield.text()
+        bloodgrp = self.manageuser_bloodgrp_combobox.currentText()
+        status = self.manageuser_status_combobox.currentText()
+        
+        # Validate the data
+        if name == "" or phone == "" or bloodgrp == "" or status == "":
+            QtWidgets.QMessageBox.warning(self, "Error", "Please fill all the fields")
             return
         
+        # Check if the phone number is valid
+        if not re.match(r"^[0-9]{11}$", phone):
+            QtWidgets.QMessageBox.warning(self, "Error", "Please enter a valid phone number")
+            return
         
+        # Check if the name is valid
+        if not re.match(r"^[a-zA-Z ]+$", name):
+            QtWidgets.QMessageBox.warning(self, "Error", "Please enter a valid name")
+            return
+
+        # Check if the user is already registered
+        mycursor = self.mydb.cursor(buffered=True)
+        sql = "Select * from user where phone_number = %s"
+        val = (phone,)
+        mycursor.execute(sql, val)
+        result = mycursor.fetchall()
+        if len(result) > 0:
+            QtWidgets.QMessageBox.warning(self, "Error", "User already registered")
+            return
         
         print("saving user data")
         # Save the data to the database
@@ -1087,6 +1103,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         print("DonorSelectedID: ", self.donorSelectedID)
 
     def donateButtonClicked(self):
+        # Check if a donor is selected
+        if self.donorID == 0:
+            QtWidgets.QMessageBox.warning(self, "Donation Error", "Please select a donor")
+            return
+
         mycursor = self.mydb.cursor(buffered=True)
         # Get the last donation date of the donor
         mycursor.execute("SELECT Last_Donation FROM donor WHERE DonorID = %s", (self.donorID,))
@@ -1284,6 +1305,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         return False
 
     def transferBlood(self):
+        # Validate if patient is selected
+        if self.PatientSelectedID == 0:
+            QtWidgets.QMessageBox.warning(self, "Error", "Please select a patient")
+            return
+
         currentRow = self.bloodtransfer_patients_table.currentRow()
         PatientID = self.bloodtransfer_patients_table.item(currentRow, 0).text()
 
@@ -1298,14 +1324,17 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
             QtWidgets.QMessageBox.information(self, "Success", "Blood Transfered Successfully\nBloodbagID: "+str(bloodbagID))
 
-            mycursor = self.mydb.cursor(buffered=True)
-            mycursor.execute("DElete from inventory where bloodbagID=%s", (bloodbagID,))
-            self.mydb.commit()
-        
+            # Delete bloodbag from inventory and set the bloodbagID reference in donor_transaction table to null
+            mycursor.execute("UPDATE donor_transaction SET BloodBagID = NULL WHERE BloodBagID = %s", (bloodbagID,))
+            mycursor.execute("Delete from inventory where bloodbagID=%s", (f"{bloodbagID}",))
+
         except:
-            print("No blood available for seleceted blood group")
-            QtWidgets.QMessageBox.warning(self, "Error", "No blood available for seleceted blood group")
-            return
+            QtWidgets.QMessageBox.information(self, "Error", "No Blood Available for this Patient")
+
+
+        self.mydb.commit()
+        
+        
    
 
 
