@@ -246,8 +246,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     def switch_page(self):
         if self.stackedWidget.currentIndex() == 0:
+            self.clearEntries()
             self.stackedWidget.setCurrentIndex(1)
         else:
+            self.clearEntries()
             self.stackedWidget.setCurrentIndex(0)
     
     def signup(self):
@@ -315,6 +317,16 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self.dashboard)
         self.dashboard.show()
         MainWindow.hide()
+
+    def clearEntries(self):
+        self.usernameTextField.setText("")
+        self.passwordtextfield.setText("")
+        self.username_signuptextfield.setText("")
+        self.password_signuptextfield.setText("")
+        self.website_signuptextfield.setText("")
+        self.email_signuptextfield.setText("")
+        self.phone_signuptextfield.setText("")
+        self.confirmpassword_signuptextfield.setText("")
 
 
 if __name__ == "__main__":
