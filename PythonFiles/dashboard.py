@@ -17,7 +17,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     mydb = mysql.connector.connect(
         host="localhost",
         user="root",
-        password="psudo",
+        password="qwerty123",
         database="blood_bank"
     )
 
@@ -479,16 +479,18 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.pushButton_11.clicked.connect(self.buttonClick)
         self.pushButton_3.clicked.connect(self.buttonClick)
         self.pushButton_4.clicked.connect(self.buttonClick)
-        
+        self.bloodtransfer_transfer_button.clicked.connect(self.transferBlood)
+
         self.pushButton_5.clicked.connect(self.medicalHistorySaveButtonClicked)
 
         self.donate_donate_button.clicked.connect(self.donateButtonClicked)
         self.manageuser_save_button.clicked.connect(self.saveManageUserData)
         self.manageuser_reset_button.clicked.connect(self.clearManageUserData)
+
         self.fetchUserData()
 
         self.registeruser_status_combobox.currentTextChanged.connect(self.registerUserStatusChanged)
-
+     
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -622,6 +624,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             
         # Blood Transfer Page
         if btnName == "pushButton_11":
+            self.clearpatientUserData()
             self.switch_page(3)
             self.fetchPatientData()
         
@@ -676,6 +679,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # self.manageuser_table.clearContents()
         self.clearManageUserData()
         self.fetchUserData()
+
+  
 
     def manageUserTableClicked(self):
         name = self.manageuser_table.item(self.manageuser_table.currentRow(), 1).text()
@@ -838,6 +843,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     '''
 
     def createDonationTransaction(self):
+
+
         date = datetime.date.today()
         date = datetime.datetime.strftime(date, '%Y-%m-%d')
 
@@ -849,6 +856,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         print("DonationID: ", donationID)
         self.donationID = donationID
         self.mydb.commit()
+
+
+    def clearpatientUserData(self):
+        self.bloodtransfer_name_textfield.setText("")
+        self.bloodtransfer_bloodgrp_textfield.setText("")
 
     def getMedicalHistory(self):
         hiv = self.medicalhistory_HIV_check1.isChecked()
@@ -987,6 +999,32 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             if x == 1:
                 return True
         return False
+
+    def transferBlood(self):
+        currentRow = self.bloodtransfer_patients_table.currentRow()
+        PatientID = self.bloodtransfer_patients_table.item(currentRow, 0).text()
+
+        try:
+            mycursor = self.mydb.cursor(buffered=True)
+            
+            mycursor.execute("select bloodbagID from inventory  where Blood_Group = (select Blood_Group from user where UserID=(select UserID from patient where PatientID=%s))and infected=0 and ExpirationDate >current_date() order by DonationDate ", (PatientID,))
+            bloodbagID = mycursor.fetchone()
+            bloodbagID = bloodbagID[0]
+            print("BloodbagID: ", bloodbagID)
+            self.bloodbagID = bloodbagID
+
+            QtWidgets.QMessageBox.information(self, "Success", "Blood Transfered Successfully\nBloodbagID: "+str(bloodbagID))
+
+            mycursor = self.mydb.cursor(buffered=True)
+            mycursor.execute("DElete from inventory where bloodbagID=%s", (bloodbagID,))
+            self.mydb.commit()
+        
+        except:
+            print("No blood available for seleceted blood group")
+            QtWidgets.QMessageBox.warning(self, "Error", "No blood available for seleceted blood group")
+            return
+        
+
 
 if __name__ == "__main__":
     import sys
