@@ -470,7 +470,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.registeruser_reset_button.clicked.connect(self.register_user_reset)
 
         self.manageuser_table.itemClicked.connect(self.manageUserTableClicked)
-        self.donate_table.itemClicked.connect(self.DonorTableClicked)
+        self.donate_table.itemClicked.connect(self.donorTableClicked)
         self.bloodtransfer_patients_table.itemClicked.connect(self.PatientTableClicked)
         
 
@@ -479,8 +479,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.pushButton_11.clicked.connect(self.buttonClick)
         self.pushButton_3.clicked.connect(self.buttonClick)
         self.pushButton_4.clicked.connect(self.buttonClick)
+        
+        self.pushButton_5.clicked.connect(self.medicalHistorySaveButtonClicked)
 
-        self.donate_donate_button.clicked.connect(self.showMedicalHistory)
+        self.donate_donate_button.clicked.connect(self.donateButtonClicked)
         self.manageuser_save_button.clicked.connect(self.saveManageUserData)
         self.manageuser_reset_button.clicked.connect(self.clearManageUserData)
         self.fetchUserData()
@@ -617,12 +619,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         if btnName == "pushButton_3":
             self.fetchDonorData()
             self.switch_page(2)
-            self.fetchDonorData()
             
         # Blood Transfer Page
         if btnName == "pushButton_11":
             self.switch_page(3)
             self.fetchPatientData()
+        
         # Inventory Page
         if btnName == "pushButton_4":
             self.switch_page(5)
@@ -630,7 +632,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def switch_page(self, page):
         self.stackedWidget.setCurrentIndex(page)
 
-    def showMedicalHistory(self):
+    def showMedicalHistoryPage(self):
         self.stackedWidget.setCurrentIndex(4)
 
     '''
@@ -788,7 +790,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     '''
 
     def fetchDonorData(self):
-        print("fetching user data")
+        print("Fetching Donor data")
         mycursor = self.mydb.cursor(buffered=True)
 
         mycursor.execute("SELECT DonorID,Name,date_of_birth,gender,blood_group,Last_Donation FROM user INNER JOIN donor ON user.userID = donor.userID")
@@ -809,14 +811,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             self.donate_table.setItem(rowPosition, 5, QtWidgets.QTableWidgetItem(f"{lastdonation}" ))    
 
         self.mydb.commit()
-
-        
-
-    def DonorTableClicked(self):
+ 
+    def donorTableClicked(self):
         currentRow = self.donate_table.currentRow()
         donorID = self.donate_table.item(currentRow, 0).text()
         name = self.donate_table.item(currentRow, 1).text()
-        bloodgrp = self.donate_table.item(currentRow, 5).text()
+        bloodgrp = self.donate_table.item(currentRow, 4).text()
  
         self.donate_name_textfield.setText(name)
         self.donate_bloodgrp_textfield.setText(bloodgrp) 
@@ -827,17 +827,25 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.donorSelectedID = userID[0]
         print(self.donorSelectedID)
 
+    def donateButtonClicked(self):
+        self.showMedicalHistoryPage()
+        self.createDonationTransaction()
+        
+
     '''
     Medical History Page Functions    
     '''
 
     def createDonationTransaction(self):
+        date = datetime.date.today()
+        date = datetime.datetime.strftime(date, '%Y-%m-%d')
+
         mycursor = self.mydb.cursor(buffered=True)
-        mycursor.execute("INSERT INTO donation_transaction(DonorID) VALUES (%s)", (self.donorSelectedID,))
-        mycursor.execute("SELECT DonationID FROM donation_transaction WHERE DonorID = %s", (self.donorSelectedID,))
+        mycursor.execute("INSERT INTO donor_transaction(DonorID, Blood_Group, Donation_Date) SELECT DonorID, Blood_Group, %s FROM Donor JOIN User USING (UserID) WHERE userID = %s", (f"{date}", self.donorSelectedID))
+        mycursor.execute("SELECT DonationID FROM donor_transaction WHERE DonorID = %s", (self.donorSelectedID,))
         donationID = mycursor.fetchone()
         donationID = donationID[0]
-        print(donationID)
+        print("DonationID: ", donationID)
         self.donationID = donationID
         self.mydb.commit()
 
@@ -851,63 +859,27 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         hepatitis = self.medicalhistory_hepatitis_check1.isChecked()
 
         mycursor = self.mydb.cursor(buffered=True)
-        mycursor.execute("SELECT DonationID FROM donor_transaction WHERE DonorID = %s", (self.donorSelectedID,))
+        mycursor.execute("SELECT DonationID FROM donor_transaction WHERE DonorID = %s ORDER BY DonationID DESC LIMIT 1", (self.donorSelectedID,))
         donationID = mycursor.fetchone()
         donationID = donationID[0]
 
-        mycursor.execute("INSERT INTO medical_history(DonationID, HIV_Positive, Malaria, Cancer, Leukemia, Heart_Problems, Lungs_Problems, Hepatitis) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (donationID, hiv, malaria, cancer, leukemia, heart, lungs, hepatitis))
+        mycursor.execute("INSERT INTO medical_history(DonationID, HIV_Positve, Malaria, Cancer, Leukemia, Heart_Problems, Lung_Problems, Hepatitis) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (donationID, hiv, malaria, cancer, leukemia, heart, lungs, hepatitis))
 
         self.mydb.commit()
 
-        
 
+    def medicalHistorySaveButtonClicked(self):
+        self.getMedicalHistory()
+        self.donate_name_textfield.clear()
+        self.donate_bloodgrp_textfield.clear()
+        self.fetchDonorData()
 
+        self.switch_page(2)
+        return
 
-
-    def fetchDonorData(self):
-        print("fetching user data")
-        mycursor = self.mydb.cursor(buffered=True)
-
-        mycursor.execute("SELECT DonorID,Name,date_of_birth,gender,blood_group,Last_Donation FROM user INNER JOIN donor ON user.userID = donor.userID")
-        myresult = mycursor.fetchall()
-        self.donate_table.clearContents()
-        self.donate_table.setRowCount(0)
-        print(myresult)
-        for x in myresult:
-            rowPosition = self.donate_table.rowCount()
-            self.donate_table.insertRow(rowPosition)
-            self.donate_table.setItem(rowPosition, 0, QtWidgets.QTableWidgetItem(f"{x[0]}"))
-            self.donate_table.setItem(rowPosition, 1, QtWidgets.QTableWidgetItem(x[1]))
-            age = self.calculate_age(x[2])
-            self.donate_table.setItem(rowPosition, 2, QtWidgets.QTableWidgetItem(f"{age}"))
-            self.donate_table.setItem(rowPosition, 3, QtWidgets.QTableWidgetItem(x[3]))
-            self.donate_table.setItem(rowPosition, 4, QtWidgets.QTableWidgetItem(x[4]))
-            lastdonation = datetime.datetime.strftime(x[5], '%d/%m/%Y')
-            self.donate_table.setItem(rowPosition, 5, QtWidgets.QTableWidgetItem(f"{lastdonation}" ))    
-
-        self.mydb.commit()
-
-    
-  
-
-    def DonorTableClicked(self):
-
-
-        currentRow = self.donate_table.currentRow()
-        donorID = self.donate_table.item(currentRow, 0).text()
-        name = self.donate_table.item(currentRow, 1).text()
-        bloodgrp = self.donate_table.item(currentRow, 4).text()
-
-        self.donate_name_textfield.setText(name)
-     
-        self.donate_bloodgrp_textfield.setText(bloodgrp)
-    
-
-        mycursor = self.mydb.cursor(buffered=True)
-        mycursor.execute("SELECT userID FROM donor WHERE DonorID = %s", (donorID,))
-        userID = mycursor.fetchone()
-        self.donorSelectedID = userID[0]
-        print(self.donorSelectedID)
+    '''
+    Blood Transfer Page Functions
+    '''
 
     def fetchPatientData(self):
         print("fetching patient data")
@@ -932,8 +904,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     
     def PatientTableClicked(self):
-
-
         currentRow = self.bloodtransfer_patients_table.currentRow()
         PatientID = self.bloodtransfer_patients_table.item(currentRow, 0).text()
         name = self.bloodtransfer_patients_table.item(currentRow, 1).text()
@@ -949,6 +919,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         userID = mycursor.fetchone()
         self.PatientSelectedID = userID[0]
         print(self.PatientSelectedID)
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
