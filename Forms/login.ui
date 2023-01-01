@@ -10,6 +10,18 @@
     <height>589</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>955</width>
+    <height>589</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>955</width>
+    <height>589</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -418,10 +430,11 @@ color: rgb(0, 0, 127);</string>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">background-color: rgb(85, 255, 0);
-background-color: rgb(255, 0, 0);
-color: rgb(0, 0, 0);
-font: 9pt &quot;Segoe UI&quot;;</string>
+       <string notr="true">background-color: rgb(255, 114, 128);
+gridline-color: rgb(255, 0, 0);
+color: rgb(0, 0, 127);
+font: 700 9pt &quot;Segoe UI&quot;;
+border-radius: 4px 4px 4px 4px;</string>
       </property>
       <property name="text">
        <string>Sign Up</string>
@@ -453,6 +466,31 @@ color: rgb(0, 0, 127);</string>
       <item>
        <property name="text">
         <string>Karachi</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Sialkot</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Faisalabad</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Multan</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Quetta</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Peshawar</string>
        </property>
       </item>
      </widget>

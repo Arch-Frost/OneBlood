@@ -44,6 +44,7 @@ gridline-color: rgb(0, 0, 127);</string>
     </property>
     <property name="font">
      <font>
+      <family>Sitka Display</family>
       <pointsize>10</pointsize>
       <italic>true</italic>
       <bold>true</bold>
@@ -62,7 +63,7 @@ font: 700 italic 10pt &quot;Sitka Display&quot;;</string>
      <enum>QFrame::Sunken</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="register_user">
      <widget class="QLabel" name="registeruser_name_label">
@@ -1262,17 +1263,23 @@ color: rgb(255, 114, 128);
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="medicalhistory_HIV_check2">
+        <widget class="QCheckBox" name="medicalhistory_HIV_check1">
          <property name="text">
           <string/>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
          </property>
          <property name="autoExclusive">
           <bool>true</bool>
          </property>
+         <property name="tristate">
+          <bool>false</bool>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="medicalhistory_HIV_check1">
+        <widget class="QCheckBox" name="medicalhistory_HIV_check2">
          <property name="text">
           <string/>
          </property>
@@ -1281,9 +1288,6 @@ color: rgb(255, 114, 128);
          </property>
          <property name="autoExclusive">
           <bool>true</bool>
-         </property>
-         <property name="tristate">
-          <bool>false</bool>
          </property>
         </widget>
        </item>
