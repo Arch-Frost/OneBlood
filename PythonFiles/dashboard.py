@@ -844,10 +844,26 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.stackedWidget.setCurrentIndex(4)
 
     '''
-    Functions for Manage User Page
+    Manage User Page Functions
     '''
 
     def saveManageUserData(self):
+        # Validating the data
+        if self.manageuser_name_textfield.text() == "":
+            self.manageuser_name_textfield.setFocus()
+            return
+        if self.manageuser_phone_textfield.text() == "":
+            self.manageuser_phone_textfield.setFocus()
+            return
+        if self.manageuser_bloodgrp_combobox.currentText() == "":
+            self.manageuser_bloodgrp_combobox.setFocus()
+            return
+        if self.manageuser_status_combobox.currentText() == "":
+            self.manageuser_status_combobox.setFocus()
+            return
+        
+        
+        
         print("saving user data")
         # Save the data to the database
         mycursor = self.mydb.cursor(buffered=True)
