@@ -884,8 +884,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.clearManageUserData()
         self.fetchUserData()
 
-  
-
     def manageUserTableClicked(self):
         name = self.manageuser_table.item(self.manageuser_table.currentRow(), 1).text()
         phone = self.manageuser_table.item(self.manageuser_table.currentRow(), 4).text()
@@ -922,7 +920,21 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             self.manageuser_table.setItem(rowPosition, 4, QtWidgets.QTableWidgetItem(x[4]))
             self.manageuser_table.setItem(rowPosition, 5, QtWidgets.QTableWidgetItem(x[5]))
             self.manageuser_table.setItem(rowPosition, 6, QtWidgets.QTableWidgetItem(x[6]))
-            self.manageuser_table.setItem(rowPosition, 7, QtWidgets.QTableWidgetItem("Status"))
+
+            mycursor2 = self.mydb.cursor(buffered=True)
+            # Check if the user is a patient
+            mycursor2.execute("SELECT * FROM patient WHERE userID = %s", (x[0],))
+            myresult2 = mycursor2.fetchall()
+            if len(myresult2) == 0:
+                # Check if the user is a donor
+                mycursor2.execute("SELECT * FROM donor WHERE userID = %s", (x[0],))
+                myresult2 = mycursor2.fetchall()
+                if len(myresult2) == 0:
+                    self.manageuser_table.setItem(rowPosition, 7, QtWidgets.QTableWidgetItem("None"))
+                else:
+                    self.manageuser_table.setItem(rowPosition, 7, QtWidgets.QTableWidgetItem("Donor"))
+            else:
+                self.manageuser_table.setItem(rowPosition, 7, QtWidgets.QTableWidgetItem("Patient"))
 
         self.mydb.commit()
 
@@ -944,9 +956,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         if self.registeruser_status_combobox.currentText() == "Donor":
             self.registeruser_lastdonation_label.show()
             self.registeruser_lastdonation_textfield.show()
+            self.registeruser_lastdonation_textfield.setDate(datetime.date.today())
         else:
             self.registeruser_lastdonation_label.hide()
             self.registeruser_lastdonation_textfield.hide()
+            self.registeruser_lastdonation_textfield.setDate(datetime.date.today())
 
     def register_user_reset(self):
         self.registeruser_name_textfield.clear()
@@ -969,6 +983,23 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         dob = datetime.datetime.strptime(dob, '%m/%d/%Y').strftime('%Y-%m-%d')
         lastdonated = datetime.datetime.strptime(lastdonated, '%m/%d/%Y').strftime('%Y-%m-%d')
+
+        if name == "":
+            QtWidgets.QMessageBox.warning(self, "Error", "Name cannot be empty")
+            return
+        
+        # Show a message box if last donation date is less than date of birth
+        if lastdonated < dob:
+            QtWidgets.QMessageBox.warning(self, "Error", "Last donation date cannot be less than date of birth")
+            return
+        # Show a message box if phone number is empty
+        if phone == "":
+            QtWidgets.QMessageBox.warning(self, "Error", "Phone number cannot be empty")
+            return
+        elif phone.isnumeric() == False:
+            QtWidgets.QMessageBox.warning(self, "Error", "Phone number can only contain numbers")
+            return
+        
         # print(type(lastdonated))
         # print(lastdonated)
 
@@ -1040,9 +1071,25 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         print("DonorSelectedID: ", self.donorSelectedID)
 
     def donateButtonClicked(self):
-        self.showMedicalHistoryPage()
-        self.createDonationTransaction()
-        
+        mycursor = self.mydb.cursor(buffered=True)
+        # Get the last donation date of the donor
+        mycursor.execute("SELECT Last_Donation FROM donor WHERE DonorID = %s", (self.donorID,))
+        lastdonation = mycursor.fetchone()
+        lastdonation = lastdonation[0]
+        print("Last Donation: ", lastdonation)
+        # Get the current date
+        today = datetime.date.today()
+        print("Today: ", today)
+        # Calculate the difference between the two dates
+        diff = today - lastdonation
+        print("Difference: ", diff)
+        # Check if the difference is greater than 3 months
+        if diff.days > 90:
+            self.showMedicalHistoryPage()
+            self.createDonationTransaction()
+        else:
+            QtWidgets.QMessageBox.warning(self, "Donation Error", "Donor cannot donate blood before 3 months of last donation")
+            
 
     '''
     Medical History Page Functions    
@@ -1090,8 +1137,20 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def medicalHistorySaveButtonClicked(self):
         self.getMedicalHistory()
         self.storeInInventory()
+
+        mycursor = self.mydb.cursor(buffered=True)
+        # Update the last donation from donor table
+        mycursor.execute("UPDATE donor SET last_donation = %s WHERE DonorID = %s", (f"{datetime.date.today()}", self.donorID))
+        # Add the blood bag ID to the donor_transaction table
+        mycursor.execute("UPDATE donor_transaction SET BloodBagID = (SELECT BloodBagID FROM inventory WHERE DonationID = %s) WHERE DonationID = %s", (self.donationID, self.donationID))
+
+        mycursor.execute("SELECT BloodBagID FROM inventory WHERE DonationID = %s", (self.donationID,))
+        bloodBagID = mycursor.fetchone()
+        bloodBagID = bloodBagID[0]
+        self.mydb.commit()
+
         # Show a message box to show the success of the transaction
-        QtWidgets.QMessageBox.about(self, "Success", "Blood Donation Successful")
+        QtWidgets.QMessageBox.about(self, "Success", "Blood Donation Successful\nBlood Bag ID: " + str(bloodBagID))
         self.donate_name_textfield.clear()
         self.donate_bloodgrp_textfield.clear()
         self.fetchDonorData()
@@ -1177,14 +1236,14 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         print("Donation Date: ", donationDate)
 
         # Calculate expiry date from donation date
-        expiryDate = donationDate + datetime.timedelta(days=90)
+        expiryDate = donationDate + datetime.timedelta(days=42)
         # expiryDate = expiryDate.strftime('%Y-%m-%d')
         print("Expiry Date: ", expiryDate)
 
         donationID = self.donationID
         print("DonationID: ", donationID)
 
-        mycursor.execute("SELECT Blood_Group FROM donor JOIN user WHERE DonorID = %s", (self.donorID,))
+        mycursor.execute("SELECT Blood_Group FROM donor JOIN user USING (UserID) WHERE DonorID = %s", (self.donorID,))
 
         bloodGroup = mycursor.fetchone()
         bloodGroup = bloodGroup[0]
